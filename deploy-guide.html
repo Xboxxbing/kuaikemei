@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>快可美官网 · 部署与运行指南（macOS / Windows）</title>
+<style>
+  body { font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; line-height: 1.85; color: #22252b; max-width: 940px; margin: 0 auto; padding: 40px 24px 80px; font-size: 15px; }
+  h1 { font-size: 28px; border-bottom: 3px solid #d6001c; padding-bottom: 12px; }
+  h2 { font-size: 22px; margin-top: 46px; padding-left: 12px; border-left: 5px solid #d6001c; }
+  h3 { font-size: 17px; margin-top: 28px; color: #a80016; }
+  code { background: #f2f3f5; padding: 2px 6px; border-radius: 3px; font-family: "SF Mono", Consolas, Menlo, monospace; font-size: 13px; color: #c7254e; }
+  pre { background: #22252b; color: #e6e8eb; padding: 16px 18px; border-radius: 6px; overflow-x: auto; font-family: "SF Mono", Consolas, Menlo, monospace; font-size: 13px; line-height: 1.7; }
+  pre code { background: none; color: inherit; padding: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  th, td { border: 1px solid #e2e4e7; padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: #f7f8fa; }
+  .box { background: #fff8e6; border: 1px solid #f2dfae; padding: 14px 18px; border-radius: 6px; margin: 16px 0; }
+  .box.blue { background: #eef4fc; border-color: #c3d9f2; }
+  .box.red { background: #fdeef0; border-color: #f3c3c9; }
+  .box.green { background: #eef7ef; border-color: #c2e2c6; }
+  .step { background: #d6001c; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; margin-right: 8px; }
+  .os { display: inline-block; font-size: 12px; padding: 2px 10px; border-radius: 3px; margin-left: 8px; font-weight: 600; }
+  .mac { background: #e8e8ed; color: #333; }
+  .win { background: #0078d4; color: #fff; }
+  .both { background: #5b6169; color: #fff; }
+  ul, ol { padding-left: 24px; }
+  li { margin-bottom: 6px; }
+  .kbd { border: 1px solid #ccc; border-bottom-width: 2px; border-radius: 4px; padding: 1px 7px; font-size: 12px; background: #fafbfc; font-family: Menlo, Consolas, monospace; }
+  .toc { background: #f7f8fa; border: 1px solid #e2e4e7; border-radius: 6px; padding: 18px 24px; }
+  .toc a { color: #d6001c; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  hr { border: 0; border-top: 1px dashed #d9dbdf; margin: 36px 0; }
+  .small { font-size: 13px; color: #6b7076; }
+  .alert { background: #fff4f5; border: 2px solid #d6001c; border-radius: 8px; padding: 20px 24px; margin: 22px 0 26px; }
+  .alert h2 { margin: 0 0 10px; font-size: 19px; border: 0; padding: 0; color: #d6001c; }
+  .alert p { margin: 0 0 10px; }
+  .alert ol { margin: 8px 0 0; }
+  .alert pre { margin: 8px 0 14px; }
+  .copy { background: #d6001c; color: #fff; border: 0; padding: 5px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+  .code-wrap { position: relative; }
+  .code-wrap pre { padding-right: 96px; }
+  .code-wrap .copy { position: absolute; right: 12px; top: 12px; }
+  .alert.ok { background: #f2f8ff; border-color: #0078d4; }
+  .alert.ok h2 { color: #0067b8; }
+  .bigstep { display: flex; gap: 12px; align-items: flex-start; margin: 12px 0; }
+  .bigstep i { flex: 0 0 28px; height: 28px; border-radius: 50%; background: #0078d4; color: #fff; display: inline-flex; align-items: center; justify-content: center; font-style: normal; font-weight: 700; }
+  .bigstep div { flex: 1; }
+  .bigstep b { color: #0067b8; }
+  .alert table { background: #fff; }
+</style>
+<script>
+function cp(btn, id) {
+  var t = document.getElementById(id).innerText;
+  function done() { btn.textContent = '已复制 ✓'; setTimeout(function () { btn.textContent = '复制'; }, 1800); }
+  function fallback() {
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch (e) { btn.textContent = '请手动选中复制'; }
+    ta.remove();
+  }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(t).then(done, fallback);
+  } else { fallback(); }
+}
+</script>
+</head>
+<body>
+
+<h1>快可美 quick-mix 官网 · 部署与运行指南</h1>
+<p class="small">适用：macOS（你现在的电脑）· Windows · Linux 服务器。整站零依赖，不需要 npm install，装好 Node.js 就能跑。</p>
+
+<div class="alert ok" id="desktop">
+<h2>✅ 文件放在桌面 / 终端一直不成功？照这 4 步做</h2>
+<p><b>先说原因：</b>早期版本教程里的命令写的是 <code>~/Downloads/quickmix-site</code>（下载文件夹），你的文件在<b>桌面</b>，所以 <code>cd</code> 第一步就失败了，后面的 <code>&amp;&amp; node ...</code> 根本没执行。不是你操作错，是路径不对。</p>
+<p>还有个好消息：这个服务是按<b>自己所在的位置</b>找文件的，<b>根本不需要 cd，也不需要 &amp;&amp;</b>。所以最稳的办法是——把文件拖进终端，连文件夹叫什么、放哪儿都不用管。</p>
+
+<p style="margin-top:18px"><b>🌟 万能拖拽法（不管文件夹叫 quickmix-site、quickmix-site 2 还是别的名字，都能用）</b></p>
+<div class="bigstep"><i>1</i><div>按 <span class="kbd">Command</span> + <span class="kbd">空格</span>，输入「终端」，回车打开终端。</div></div>
+<div class="bigstep"><i>2</i><div>在终端里输入 <code>node </code> —— <b>node 后面要有一个空格，千万别漏</b>。</div></div>
+<div class="bigstep"><i>3</i><div>在 Finder 里打开 <b>桌面 → quickmix-site → server</b> 文件夹，把里面的 <b>app.js</b> 文件<b>直接拖进终端窗口</b>。终端会自动填出完整路径，看起来像：<br><code>node /Users/你的用户名/Desktop/quickmix-site/server/app.js</code></div></div>
+<div class="bigstep"><i>4</i><div>按 <span class="kbd">回车</span>。看到「前台首页：http://localhost:3000/」就成功了，浏览器打开这个地址；后台是 <code>/admin</code>。</div></div>
+<div class="box green" style="margin:14px 0">
+<b>整个过程不用 cd、不用记路径、不用执行任何脚本文件</b>，所以 macOS 的「无法验证」警告也不会出现。<br>
+<b>终端窗口不能关</b>（关了网站就停）；停止服务按 <span class="kbd">Ctrl</span>+<span class="kbd">C</span>。端口 3000 被占用会自动顺延，以终端实际输出的地址为准。
+</div>
+
+<p><b>不想拖？直接复制这两条也行（桌面专用）</b></p>
+<div class="code-wrap"><pre><code id="cmdD">node ~/Desktop/quickmix-site/server/app.js</code></pre><button class="copy" onclick="cp(this,'cmdD')">复制</button></div>
+<p class="small">文件夹名不确定（带 (1)、带空格、或者套了一层）？用这条自动找，粘进终端回车即可：</p>
+<div class="code-wrap"><pre><code id="cmdE">node "$(find ~/Desktop -path '*/server/app.js' | head -1)"</code></pre><button class="copy" onclick="cp(this,'cmdE')">复制</button></div>
+<p class="small">文件不在桌面而在「下载」？把上面命令里的 <code>~/Desktop</code> 换成 <code>~/Downloads</code>。</p>
+
+<p style="margin-top:18px"><b>终端报错对照表</b></p>
+<table>
+<tr><th style="width:38%">终端显示</th><th>原因 / 怎么办</th></tr>
+<tr><td><code>cd: no such file or directory</code><br>或 <code>No such file or directory</code></td><td>路径不对。别用带 <code>cd ~/Downloads</code> 的老命令，用上面桌面命令或拖拽法。</td></tr>
+<tr><td><code>node: command not found</code><br><code>zsh: command not found: node</code></td><td><b>没装 Node.js</b>。去 https://nodejs.org 下载左边 LTS 版双击安装，<b>装完把终端关掉重开</b>，再执行。可先敲 <code>node -v</code> 验证，出现 v20.x 之类就装好了。</td></tr>
+<tr><td><code>Error: Cannot find module</code></td><td>拖错文件了。要拖 <code>server</code> 文件夹里那个 <code>app.js</code>，不是别的文件、也不是文件夹。</td></tr>
+<tr><td><code>syntax error</code> / 一堆乱码 / <code>command not found: cd~</code></td><td>复制时带了中文引号、全角 <code>＆</code> 或漏了空格。<b>手动敲</b>，或点上面的「复制」按钮（复制的是纯文本）。</td></tr>
+<tr><td>提示 <code>Port 3000 is already in use</code> 或地址变成 3001</td><td>正常，服务会自动换端口。<b>以终端实际打印的地址为准</b>。</td></tr>
+<tr><td>终端一片空白 / 没有任何输出</td><td>可能拖进去的是文件夹而不是文件，或忘了按回车。重新做第 2～4 步。</td></tr>
+</table>
+<p class="small">还不行？把终端里的<b>报错原文</b>复制发给我，我按报错给你一条能直接用的命令。</p>
+</div>
+
+<div class="alert" id="gatekeeper">
+<h2>⚠ macOS 弹「Apple 无法验证 start-mac.command」？先看这里</h2>
+<p>这是 macOS 对<b>网上下载的未签名脚本</b>的例行检查，<b>不是文件坏了</b>。脚本内容只有「检查 Node → 换端口 → 启动本地服务 → 打开浏览器」，没有联网下载、没有 sudo、不改系统文件。</p>
+<p><b>为什么上个版本没事、这个版本又弹：</b>macOS 的放行只认「具体那一个文件」。每次重新下载 / 重新解压，<code>start-mac.command</code> 都是新文件、被重新打上隔离标记，所以要再放行一次。旧文件当时已放行过，新文件没有。</p>
+<p><b>最省事：完全不碰那个脚本，直接用终端启动（macOS 不会拦截）</b></p>
+<div class="code-wrap"><pre><code id="cmdA">node ~/Desktop/quickmix-site/server/app.js</code></pre><button class="copy" onclick="cp(this,'cmdA')">复制</button></div>
+<p class="small">（复制按钮若没反应，直接拖选上面那行文字按 <span class="kbd">Cmd</span>+<span class="kbd">C</span> 也行。）<br>看到「前台首页：http://localhost:3000/」即成功。终端窗口别关，关闭 = 网站停止；停止按 <span class="kbd">Ctrl</span>+<span class="kbd">C</span>。</p>
+<ol>
+  <li><b>一条命令永久清掉整包隔离标记（100% 有效，之后双击就能用）</b>：<div class="code-wrap"><pre><code id="cmdB">cd ~/Desktop/quickmix-site &amp;&amp; xattr -dr com.apple.quarantine . &amp;&amp; chmod +x start-mac.command</code></pre><button class="copy" onclick="cp(this,'cmdB')">复制</button></div>
+      <span class="small">还没解压？也可以先对 zip 执行 <code>xattr -d com.apple.quarantine ~/Desktop/quickmix-site.zip</code> 再解压，解压出来的文件就都是干净的。</span></li>
+  <li><b>不想开终端</b>：右键 <code>start-mac.command</code> → 「打开」→ 弹窗里点「打开」；或去 <b>系统设置 → 隐私与安全性 → 仍要打开</b>。<span class="small">注意：较新的 macOS 对未签名脚本可能只给「完成 / 移到废纸篓」两个按钮、没有「打开」，这种情况下直接用上面第 1 条或方式 A。</span></li>
+  <li>若提示「权限不够」而非安全警告：<code>chmod +x start-mac.command</code>。</li>
+</ol>
+<p class="small">同目录另有一份纯文本 <code>macOS首次启动必读.txt</code>，双击用文本编辑打开，不会触发任何警告。若你已经点了「移到废纸篓」，重新解压 zip 即可，文件本身没问题。</p>
+</div>
+
+<div class="toc">
+<b>目录</b>
+<ol>
+  <li><a href="#desktop" style="font-weight:700">✅ 文件在桌面 / 终端一直不成功 → 先看这里</a></li>
+  <li><a href="#gatekeeper" style="font-weight:700">⚠ macOS 弹出「无法验证」警告 → 先看这里</a></li>
+  <li><a href="#s1">先在本机跑起来（5 分钟，强烈建议先做）</a></li>
+  <li><a href="#s2">让同一 WiFi 下的手机 / 同事电脑也能访问</a></li>
+  <li><a href="#s3">正式上线：部署到云服务器（公网可访问）</a></li>
+  <li><a href="#s4">不买服务器：临时公网演示（内网穿透）</a></li>
+  <li><a href="#s5">Windows 电脑上运行注意事项</a></li>
+  <li><a href="#s6">日常运维：备份、迁移、更新内容</a></li>
+  <li><a href="#s7">常见问题排查</a></li>
+</ol>
+</div>
+
+<div class="box blue">
+<b>先搞清楚一件事：</b>这个网站分两部分——<b>前台</b>（客户看的 14 个页面）和<b>后台</b>（你自己改内容的管理系统，地址后面加 <code>/admin</code>）。两者由同一个 Node 程序提供，所以只要服务在跑，前后台都能用。
+</div>
+
+<h2 id="s1">一、先在本机跑起来（5 分钟）<span class="os both">macOS + Windows</span></h2>
+
+<h3><span class="step">1</span>安装 Node.js（只需做一次）</h3>
+<p>打开 <b>https://nodejs.org</b> ，下载页面上<b>左边那个 LTS 版本</b>（长期支持版，比如 20.x LTS），双击安装包一路「下一步」即可。</p>
+<ul>
+  <li><span class="os mac">macOS</span> 下载 <code>node-v20.x.x.pkg</code>，双击安装。</li>
+  <li><span class="os win">Windows</span> 下载 <code>node-v20.x.x-x64.msi</code>，双击安装，<b>勾选 "Add to PATH"</b>（默认已勾）。</li>
+</ul>
+<p>验证是否装好 —— 打开终端<span class="os mac">macOS：Command + 空格 搜「终端」</span><span class="os win">Windows：Win + R 输入 cmd</span>，执行：</p>
+<pre><code>node -v</code></pre>
+<p>显示 <code>v20.x.x</code> 之类就成功了。如果提示「不是内部或外部命令」，说明没装好或没加 PATH，重启电脑再试。</p>
+
+<h3><span class="step">2</span>解压并启动（推荐：终端一行命令）</h3>
+<p>把 <code>quickmix-site.zip</code> 解压，得到一个 <code>quickmix-site</code> 文件夹。</p>
+<div class="box red">
+<b>路径要求（Windows 用户特别注意）：</b>文件夹请放在<b>不含中文和空格</b>的路径下，例如 <code>D:\quickmix-site</code> 或 <code>C:\quickmix-site</code>。不要放在「桌面\新建文件夹(2)\快可美 官网」这类路径里。
+</div>
+<div class="box green">
+<b>推荐用终端启动</b> —— 这一行只是让已装好的 Node 运行我们自己的程序，<b>不执行任何脚本文件</b>，所以 macOS 不会弹「无法验证」的警告，也不会触发 Windows SmartScreen。
+</div>
+<p><span class="os mac">macOS</span> 打开「终端」（<span class="kbd">Command</span> + 空格 搜「终端」），粘贴：</p>
+<pre><code>node ~/Desktop/quickmix-site/server/app.js</code></pre>
+<p><span class="os win">Windows</span> 打开 <code>cmd</code> 或 PowerShell，粘贴：</p>
+<pre><code>cd /d D:\quickmix-site &amp;&amp; node server/app.js</code></pre>
+<div class="box">
+<b>小技巧（macOS）：</b>不用手敲路径。先输入 <code>cd </code>（cd 加一个空格），然后把 <code>quickmix-site</code> 文件夹<b>直接拖进终端窗口</b>，路径会自动填上，再敲 <code>&amp;&amp; node server/app.js</code> 即可。<br>
+文件不在桌面？把 <code>~/Desktop</code> 换成实际位置（如 <code>~/Downloads</code>）；更省事的做法见<a href="#desktop">顶部的「拖拽法」</a>，完全不用记路径。
+</div>
+<p>终端窗口会显示：</p>
+<pre><code>================================================
+ quick-mix 快可美官网已启动
+================================================
+ 前台首页： http://localhost:3000/
+ 管理后台： http://localhost:3000/admin
+ 后台账号： admin        密码： admin
+ 数据文件： .../server/data/db.json
+
+ 保持这个窗口开着 = 网站就在运行；关掉窗口 = 网站停止
+================================================</code></pre>
+<p>浏览器打开 <code>http://localhost:3000/</code>；后台是 <code>/admin</code>。端口 3000 被占用时脚本会自动顺延，<b>以终端实际输出的地址为准</b>。</p>
+
+<div class="box green">
+<b>记住三件事：</b><br>
+① 那个终端窗口<b>不能关</b>，关了网站就停了；<br>
+② 改内容进 <code>http://localhost:3000/admin</code>，账号密码都是 <code>admin</code>；<br>
+③ 停止服务：在窗口里按 <span class="kbd">Ctrl</span> + <span class="kbd">C</span>。
+</div>
+
+<h3><span class="step">3</span>可选：双击脚本启动（首次需放行一次）</h3>
+<p>如果你更喜欢双击，文件夹里也提供了两个启动脚本：</p>
+<ul>
+  <li><span class="os mac">macOS</span> 双击 <code>start-mac.command</code><br>
+    <span class="small">首次会弹「Apple 无法验证…」：<b>右键</b>该文件 → 「打开」→ 弹窗里点「打开」；或去 <b>系统设置 → 隐私与安全性 → 仍要打开</b>。也可一条命令永久解决：<code>xattr -dr com.apple.quarantine .</code>。详见<a href="#gatekeeper">顶部红框</a>。</span></li>
+  <li><span class="os win">Windows</span> 双击 <code>start-windows.bat</code><br>
+    <span class="small">若弹「Windows 已保护你的电脑」，点「更多信息」→「仍要运行」；防火墙询问选「允许访问」。</span></li>
+</ul>
+<p class="small">双击脚本会自动检测 Node、端口占用自动顺延、自动打开浏览器，效果和终端命令完全一样。<b>被系统拦住时，改用上面的终端命令即可，不必反复和弹窗较劲。</b></p>
+
+<h2 id="s2">二、让手机 / 同事电脑也能访问<span class="os both">同一 WiFi 下</span></h2>
+<p>本机跑起来后，同一 WiFi 下的设备可以用你的局域网 IP 访问，适合给同事、客户现场演示。</p>
+<p><span class="os mac">macOS</span> 查本机 IP：系统设置 → 网络 → Wi-Fi → 详细信息；或终端执行：</p>
+<pre><code>ipconfig getifaddr en0        # Wi-Fi
+ipconfig getifaddr en1        # 有线（视机型而定）</code></pre>
+<p><span class="os win">Windows</span> 终端执行 <code>ipconfig</code>，找「IPv4 地址」那一行，比如 <code>192.168.1.23</code>。</p>
+<p>然后其它设备浏览器访问 <code>http://192.168.1.23:3000/</code> 即可（把 IP 换成你自己的）。</p>
+<div class="box">
+如果访问不了，多半是防火墙拦了。macOS：系统设置 → 隐私与安全性 → 防火墙 → 关闭，或允许 Node 入站连接。Windows：防火墙弹窗时选「允许」，或在「允许应用通过防火墙」里勾上 Node.js。
+</div>
+
+<h2 id="s3">三、正式上线：部署到云服务器<span class="os mac">从你的 Mac 操作</span></h2>
+<p>要让全国客户都能访问，需要一台有公网 IP 的云服务器。推荐腾讯云或阿里云的<b>轻量应用服务器</b>，<b>2 核 2G</b> 配置即可（几十到一百元/月，新用户常有优惠）。</p>
+
+<h3><span class="step">1</span>买服务器</h3>
+<table>
+<tr><th style="width:120px">选项</th><th>建议</th></tr>
+<tr><td>厂商</td><td>腾讯云轻量应用服务器 / 阿里云轻量应用服务器（国内访问快，备案方便）</td></tr>
+<tr><td>配置</td><td>2 核 2G、40G  SSD、3~5M 带宽（美缝站图片不多，完全够用）</td></tr>
+<tr><td>系统镜像</td><td><b>Ubuntu 22.04 LTS</b>（本文命令以此为准，选它最省事）</td></tr>
+<tr><td>地域</td><td>选离你近的，比如「上海」「广州」</td></tr>
+</table>
+<p>买完在控制台能看到：<b>公网 IP</b>、<b>root 密码</b>（需重置一次才能拿到）。</p>
+<div class="box red">
+<b>防火墙要放行端口：</b>在云厂商控制台的「防火墙 / 安全组」里，放行 <code>22</code>（远程登录）、<code>80</code>（网站）、<code>443</code>（HTTPS）。不放行网站打不开。
+</div>
+
+<h3><span class="step">2</span>从 Mac 远程连上服务器</h3>
+<p>macOS 自带 ssh，不用装任何软件。打开「终端」：</p>
+<pre><code>ssh root@你的公网IP</code></pre>
+<p>首次连接问 <code>Are you sure you want to continue connecting?</code> 输入 <code>yes</code> 回车，再输入密码（输入时屏幕上不显示，正常，输完直接回车）。</p>
+<p class="small">Windows 用户可用自带 PowerShell（Win10+ 自带 ssh），或装 <b>Xshell</b> / <b>FinalShell</b> / <b>MobaXterm</b>（FinalShell 免费好用，还能直接拖文件上传）。</p>
+
+<h3><span class="step">3</span>在服务器上装 Node.js</h3>
+<pre><code># Ubuntu / Debian 用这条
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# CentOS / Rocky 用这条
+curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+yum install -y nodejs
+
+# 装完验证
+node -v        # 显示 v20.x.x 即可</code></pre>
+
+<h3><span class="step">4</span>把网站文件传到服务器</h3>
+<p><b>方式 A：在 Mac 终端用 scp（一条命令搞定）</b></p>
+<pre><code># 注意：在「你自己的 Mac」上执行，不是在服务器上
+cd ~/Downloads
+scp quickmix-site.zip root@你的公网IP:/root/</code></pre>
+<p><b>方式 B：用 FileZilla（图形界面，不熟命令就用这个）</b><br>
+下载 FileZilla Client → 顶部填：主机 <code>sftp://你的公网IP</code>、用户名 <code>root</code>、密码、端口 <code>22</code> → 快速连接 → 左边找到本地的 zip，拖到右边。</p>
+<p>然后在服务器上解压：</p>
+<pre><code>ssh root@你的公网IP
+apt install -y unzip        # 没有 unzip 就装一下
+cd /root
+unzip quickmix-site.zip
+cd quickmix-site
+ls</code></pre>
+
+<h3><span class="step">5</span>用 pm2 让它 24 小时常驻</h3>
+<p>直接 <code>node server/app.js</code> 在你关掉终端后会停止，所以要 pm2（进程守护，还能自动重启）：</p>
+<pre><code>npm install -g pm2
+cd /root/quickmix-site
+pm2 start server/app.js --name quickmix
+pm2 save
+pm2 startup        # 开机自启：把这条命令输出的那一行再复制执行一次</code></pre>
+<p>常用命令：</p>
+<pre><code>pm2 status          # 看状态，running 就是正常
+pm2 logs quickmix   # 看日志（报错看这里）
+pm2 restart quickmix
+pm2 stop quickmix</code></pre>
+<p>现在访问 <code>http://你的公网IP:3000/</code> 应该能看到网站了。</p>
+
+<h3><span class="step">6</span>绑定域名（用 80 端口访问，去掉 :3000）</h3>
+<p>装 nginx 做反向代理，让用户访问 <code>www.你的域名.com</code> 即可：</p>
+<pre><code>apt install -y nginx</code></pre>
+<p>新建配置文件：</p>
+<pre><code>nano /etc/nginx/conf.d/quickmix.conf</code></pre>
+<p>粘贴以下内容（把 <code>www.你的域名.com</code> 换成真实域名）：</p>
+<pre><code>server {
+    listen 80;
+    server_name www.你的域名.com 你的域名.com;
+
+    client_max_body_size 20m;   # 后台上传图片需要
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}</code></pre>
+<p>按 <span class="kbd">Ctrl</span>+<span class="kbd">O</span> 回车保存，<span class="kbd">Ctrl</span>+<span class="kbd">X</span> 退出。然后：</p>
+<pre><code>nginx -t                  # 检查配置，显示 successful 才行
+systemctl reload nginx
+systemctl enable nginx    # 开机自启</code></pre>
+<p>最后到<b>域名注册商后台</b>（万网/腾讯云等）做一条解析：类型 <code>A</code>，主机记录 <code>www</code>，记录值填<b>服务器公网 IP</b>。等几分钟生效。</p>
+<div class="box red">
+<b>备案：</b>服务器在中国大陆，域名必须 ICP 备案后才能正常访问（不备案会被拦截）。在云厂商后台有现成的备案流程，按提示提交营业执照等材料，一般 10~20 个工作日。备案期间可以先用 IP 访问测试。
+</div>
+
+<h3><span class="step">7</span>加 HTTPS（小绿锁，可选但建议做）</h3>
+<pre><code>apt install -y certbot python3-certbot-nginx
+certbot --nginx -d www.你的域名.com -d 你的域名.com</code></pre>
+<p>按提示输入邮箱并同意条款，证书会自动配置，到期自动续期。之后访问 <code>https://www.你的域名.com</code> 就有小绿锁了。</p>
+
+<h2 id="s4">四、不买服务器：临时公网演示<span class="os both">内网穿透</span></h2>
+<p>只想先给客户看一眼效果、不想买服务器时，用内网穿透把本机 3000 端口暴露到公网。适合演示，<b>不适合长期正式使用</b>（免费版地址会变、速度慢）。</p>
+<pre><code># 1. 本机先按第一章把网站跑起来（localhost:3000）
+
+# 2. 装 cpolar（Mac 用 Homebrew）
+brew install cpolar/tap/cpolar
+
+# 3. 另开一个终端窗口执行
+cpolar http 3000</code></pre>
+<p>它会给出一个 <code>https://xxxxx.cpolar.cn</code> 之类的公网地址，发给客户即可。Windows 用户去 cpolar 官网下载客户端，效果一样。同类工具还有 natapp、花生壳、frp。</p>
+
+<h2 id="s5">五、Windows 电脑上运行注意事项<span class="os win">Windows 专章</span></h2>
+<table>
+<tr><th style="width:150px">问题</th><th>说明 / 解决办法</th></tr>
+<tr><td>启动没反应</td><td>确认 Node 已装（<code>node -v</code> 有版本号）。双击 <code>start-windows.bat</code> 而不是 <code>.command</code>（.command 是 Mac 用的）</td></tr>
+<tr><td>中文显示乱码</td><td>脚本已内置 <code>chcp 65001</code>。若仍乱码，不要用系统自带的老记事本编辑源码；改用 VS Code 或 Notepad++，保存为 UTF-8</td></tr>
+<tr><td>双击闪一下就没了</td><td>脚本末尾有 <code>pause</code>。若还是闪退，手动在 cmd 里执行 <code>cd /d D:\quickmix-site</code> 再 <code>node server/app.js</code> 看报错</td></tr>
+<tr><td>提示端口被占用</td><td>脚本会自动换端口（3001、3002…）。想固定端口就改脚本里的 <code>set PORT_NUM=3000</code></td></tr>
+<tr><td>防火墙弹窗</td><td>选「允许访问」，否则局域网内其它设备连不上</td></tr>
+<tr><td>杀毒软件误报</td><td>Node 程序常被误报，加到白名单即可</td></tr>
+<tr><td>文件解压后乱码</td><td>用 WinRAR / 7-Zip 解压，别用老版本系统自带解压</td></tr>
+<tr><td>想在 Windows 服务器上部署</td><td>同样装 Node → <code>node server/app.js</code>；常驻可用 <code>pm2</code> 或 nssm 把 Node 注册成 Windows 服务；再用 IIS 或 nginx for Windows 反代</td></tr>
+</table>
+
+<h2 id="s5b">五·补、动效与图片说明</h2>
+<ul>
+  <li><b>动效全部自动生效</b>：<code>public/assets/js/motion.js</code> 已在 14 个页面统一引入，包含滚动入场、数字滚动、首页 Hero 三屏轮播、顶部进度条、悬浮客服面板 + 返回顶部、图片灯箱（支持键盘左右切换）、产品对比控件等。不需要额外配置。</li>
+  <li><b>动效卡顿 / 想关闭</b>：在系统「辅助功能 → 显示 → 减弱动态效果」开启后，所有动画会自动关闭（已适配 <code>prefers-reduced-motion</code>）。</li>
+  <li><b>产品图片</b>：原站图片服务器全站拦截（直连 403），已改用公开渠道获取的真实产品图接入 4 款主力产品；其余为矢量占位图。请逐步在后台替换为自己的实拍图，正式商用前注意确认图片版权。</li>
+  <li><b>替换图片</b>：后台「产品中心 → 编辑 → 产品主图 → 上传」，或直接覆盖 <code>public/assets/img/product/</code> 下的同名文件。</li>
+</ul>
+
+<h2 id="s5c">五·补二、视觉与排版优化说明（v2）</h2>
+<ul>
+  <li><b>首屏</b>：三屏轮播为「左侧深色文字 + 右侧整幅实拍大图」，带缓慢推镜动画，文字始终清晰可读。</li>
+  <li><b>真实配图</b>：案例、新闻封面已换为真实工程与产品摄影；产品列表为统一橙色展陈卡，实拍海报放在详情页图集中切换查看。</li>
+  <li><b>内容恒可见</b>：滚动入场动画改为「默认可见」，即使脚本未执行或打印/截图也不会出现整片空白。</li>
+  <li><b>移动端</b>：筛选按钮单行横向滑动、搜索独占整行，产品网格 2 列，省份地图在容器内横向滑动。14 个页面在 1440px 与 390px 下均无横向溢出。</li>
+  <li><b>替换图片</b>：后台「产品中心 / 案例工程 / 新闻资讯」直接上传；或覆盖 <code>public/assets/img/product/</code>、<code>case/</code>、<code>news/</code> 下的同名文件。</li>
+  <li><b>重新生成产品卡</b>：改过产品名或型号后，在网站目录执行 <code>python3 tools/gen-product-cards.py</code>。</li>
+  <li><b>改完看不到变化</b>：浏览器强刷（Mac <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span>，Windows <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span>）。</li>
+</ul>
+
+<h2 id="s5d">五·补三、后台进不去 / 菜单点不动</h2>
+<table>
+<tr><th style="width:220px">现象</th><th>原因与解决</th></tr>
+<tr><td>左侧菜单点了没反应，内容区一直停在仪表盘</td><td>旧版后台在「首次登录」时没有注册路由监听。<b>更新到本版即可</b>；临时解法是登录后按一次 F5 刷新。</td></tr>
+<tr><td>打开后台一直显示「加载中…」</td><td>访问了不带尾部斜杠的 <code>/admin</code>，相对资源路径被解析错导致 404。请访问 <code>/admin/</code>；本版已自动把 <code>/admin</code> 跳转到 <code>/admin/</code>。</td></tr>
+<tr><td>内容区空白但没有任何提示</td><td>本版已加兜底：会显示「页面加载失败」和「重新加载」按钮，不再静默失败。</td></tr>
+<tr><td>更新后界面还是老样子</td><td>浏览器缓存。强刷（Mac <span class="kbd">Cmd</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span>，Windows <span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span>）；本版后台资源已带版本号。</td></tr>
+<tr><td>点了「导出 CSV」没反应</td><td>本版改为明确的下载动作并带成功提示，不再依赖静默跳转。</td></tr>
+</table>
+<div class="box blue">
+<b>最小更新方式：</b>不想重新解压整包时，只替换 <code>admin/index.html</code>、<code>admin/assets/js/admin.js</code>、<code>server/app.js</code> 三个文件即可。<br>
+静态资源实时读取，刷新浏览器就能生效；但 <code>server/app.js</code> 的 <code>/admin</code> 跳转需要<b>重启一次服务</b>才会生效（关掉启动窗口，重新双击启动脚本）。
+</div>
+
+<h2 id="s6">六、日常运维</h2>
+<h3>备份（重要）</h3>
+<p>所有内容都在一个文件里：<code>quickmix-site/server/data/db.json</code>。定期拷走它就行（外加 <code>public/uploads/</code> 里你上传的图片）。</p>
+<pre><code># 服务器上做一次备份
+cp /root/quickmix-site/server/data/db.json /root/db-$(date +%F).json
+
+# 从服务器下载备份到你的 Mac（在你 Mac 上执行）
+scp root@你的公网IP:/root/quickmix-site/server/data/db.json ~/Desktop/db-backup.json</code></pre>
+
+<h3>在服务器上改内容后，同步到"双击打开"模式</h3>
+<p>后台改完内容后，如果还想让 <code>public/index.html</code> 双击打开也显示新内容，执行一次：</p>
+<pre><code>node tools/gen-fallback.js</code></pre>
+
+<h3>恢复出厂示例数据</h3>
+<p>停掉服务 → 删除 <code>server/data/db.json</code> → 重启，会自动从 <code>seed.json</code> 重新生成。</p>
+
+<h3>更新网站内容（推荐流程）</h3>
+<ol>
+<li>浏览器进 <code>你的域名/admin</code> 登录</li>
+<li>在「产品中心 / 案例工程 / 新闻资讯 / 合作运营商」里增删改</li>
+<li>前台刷新即可看到，<b>不用重启服务</b></li>
+<li>记得在「站点设置」里把公司名、电话、备案号改成真实信息</li>
+</ol>
+
+<h2 id="s7">七、常见问题排查</h2>
+<table>
+<tr><th style="width:220px">现象</th><th>原因与解决</th></tr>
+<tr><td>提示 <code>node: command not found</code></td><td>Node 没装好或没加入 PATH；重装并重启终端/电脑</td></tr>
+<tr><td>提示 <code>EADDRINUSE</code></td><td>端口被占用；程序已自动顺延端口，看终端实际输出的端口号</td></tr>
+<tr><td>浏览器打不开 localhost</td><td>服务没启动（窗口被关了）；或端口号不对，看终端输出</td></tr>
+<tr><td>服务器 IP 访问不了</td><td>① 控制台防火墙没放行端口 ② pm2 进程挂了（<code>pm2 status</code>）③ nginx 没起来（<code>systemctl status nginx</code>）</td></tr>
+<tr><td>域名访问不了</td><td>解析没生效（等 10 分钟）或没备案</td></tr>
+<tr><td>后台上传图片失败</td><td>nginx 没配 <code>client_max_body_size</code>；或 <code>public/uploads/</code> 没写权限</td></tr>
+<tr><td>改了内容前台没变</td><td>强刷浏览器 <span class="kbd">Cmd/Ctrl</span>+<span class="kbd">Shift</span>+<span class="kbd">R</span>；或后台里该条状态是「下架」</td></tr>
+<tr><td>后台菜单点了没反应</td><td>旧包缺陷：首次登录未注册路由监听。更新到本版；临时按 F5 刷新。详见<a href="#s5d">五·补三</a></td></tr>
+<tr><td>后台一直「加载中…」</td><td>用 <code>/admin/</code>（带斜杠）访问；本版已自动跳转</td></tr>
+<tr><td>忘记后台密码</td><td>删掉 <code>server/data/db.json</code> 重启即恢复 admin/admin（会丢失改动，慎用）；或改 db.json 里 password 为 <code>21232f297a57a5a743894a0e4a801fc3</code>（即 admin）</td></tr>
+</table>
+
+<hr>
+<p class="small">
+<b>技术栈：</b>Node.js 原生 HTTP 服务 + 原生 JavaScript + JSON 文件存储，零第三方依赖。<br>
+<b>默认后台：</b>账号 <code>admin</code> / 密码 <code>admin</code> —— 上线后请第一时间在后台右上角「修改密码」里改掉。<br>
+<b>数据来源：</b>产品、案例、新闻按 quick-mix 快可美公开资料整理；标注「示例数据」的条目和占位图请替换为你们的真实资料与实拍图。
+</p>
+
+</body>
+</html>

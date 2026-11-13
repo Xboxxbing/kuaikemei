@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>快可美中国简介 | 快可美 quick-mix</title>
+<meta name="description" content="quick-mix 快可美是德国建材行业领军品牌，自 1968 年以来扎根建筑行业，母公司西伟德创立于 1919 年，全球 60 多家经营机构、30 多家工厂。">
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before { content: ""; position: absolute; left: 6px; top: 8px; bottom: 8px; width: 2px; background: var(--line); }
+  .timeline li { position: relative; padding: 0 0 28px 14px; }
+  .timeline li::before {
+    content: ""; position: absolute; left: -28px; top: 8px; width: 14px; height: 14px;
+    border-radius: 50%; background: #fff; border: 3px solid var(--brand);
+  }
+  .timeline .y { font-size: 20px; font-weight: 700; color: var(--brand); }
+  .timeline .t { font-size: 14px; color: var(--ink-2); margin-top: 4px; }
+  .about-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+  .about-grid .pic { background: var(--bg-soft); border: 1px solid var(--line); min-height: 300px; display: flex; align-items: center; justify-content: center; }
+  .cert-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .cert { border: 1px solid var(--line); padding: 22px; text-align: center; background: #fff; }
+  .cert b { display: block; font-size: 26px; color: var(--brand); }
+  .cert span { font-size: 13px; color: var(--ink-3); }
+  @media (max-width: 860px) { .about-grid, .cert-grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div id="header"></div>
+
+<div class="crumb"><div class="wrap"><a href="index.html">首页</a><span>/</span>关于我们<span>/</span>快可美中国简介</div></div>
+
+<section class="section">
+  <div class="wrap">
+    <div class="about-grid">
+      <div>
+        <div class="en text-brand" style="font-size:12px;letter-spacing:3px">ABOUT US</div>
+        <h2 style="font-size:30px;margin:10px 0 18px">快可美中国简介</h2>
+        <p id="aboutText"></p>
+        <p class="muted">自 2008 年旗下品牌 quick-mix、hahne、akurit 相继进入中国，业务涉及内外墙无机干粉砂浆及涂料系统、外墙外保温系统、屋面及室内防水系统、地坪系统、瓷砖及天然石材粘贴系统、特殊功能砂浆系统等。</p>
+        <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+          <a class="btn btn-primary" href="products.html">浏览产品中心</a>
+          <a class="btn btn-line" href="sievert.html">关于西伟德</a>
+        </div>
+      </div>
+      <div class="pic">
+        <img src="assets/img/case/case-sports.jpg" alt="快可美工程实景" style="width:100%;height:300px;object-fit:cover">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="wrap">
+    <div class="sec-head"><div class="en">DATA</div><h2>品牌实力</h2></div>
+    <div class="cert-grid" id="stats"></div>
+  </div>
+</section>
+
+<section class="section" id="history">
+  <div class="wrap">
+    <div class="sec-head left"><div class="en">DEVELOPMENT PATH</div><h2>快可美发展历程</h2>
+      <a class="sec-more" href="sievert.html">关于西伟德集团 →</a>
+    </div>
+    <ul class="timeline" id="timeline"></ul>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>想了解快可美的产品体系？</h2>
+    <p>获取产品手册、技术参数与样册支持。</p>
+    <a class="btn btn-primary" style="background:#fff;color:#d6001c" href="contact.html">联系我们</a>
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="data/site.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/motion.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+QMMount('about').then(async () => {
+  const s = await QM.settings();
+  document.getElementById('aboutText').textContent = s.about || '';
+  document.getElementById('stats').innerHTML = (s.stats || []).map(x =>
+    `<div class="cert"><b>${x.num}</b><span>${x.label}</span></div>`).join('');
+  document.getElementById('timeline').innerHTML = (s.timeline || []).map(x =>
+    `<li><div class="y">${x.year}</div><div class="t">${x.text}</div></li>`).join('');
+});
+</script>
+</body>
+</html>

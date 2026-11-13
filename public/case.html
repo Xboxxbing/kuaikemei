@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>案例详情 | 快可美 quick-mix</title>
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+  .case-hero { height: 380px; background: #222 center/cover no-repeat; position: relative; }
+  .case-hero .m { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.72)); display: flex; align-items: flex-end; }
+  .case-hero .m .wrap { padding-bottom: 36px; color: #fff; }
+  .case-hero h1 { font-size: 34px; }
+  .case-info { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; border: 1px solid var(--line); padding: 22px; margin: 32px 0; }
+  .case-info div b { display: block; font-size: 13px; color: var(--ink-3); font-weight: 400; }
+  .case-info div span { font-size: 15px; }
+  @media (max-width: 860px) { .case-info { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div id="header"></div>
+
+<div class="crumb"><div class="wrap"><a href="index.html">首页</a><span>/</span><a href="cases.html">应用案例</a><span>/</span><span id="crumbName">案例详情</span></div></div>
+
+<div class="case-hero" id="hero">
+  <div class="m"><div class="wrap"><h1 id="cTitle">加载中…</h1><div id="cLoc" style="opacity:.85;margin-top:8px"></div></div></div>
+</div>
+
+<section class="wrap" style="padding:20px 0 60px">
+  <div class="case-info" id="cInfo"></div>
+  <h2 style="font-size:22px;margin:8px 0 16px">项目概况</h2>
+  <div id="cContent" style="white-space:pre-line;max-width:900px;line-height:1.9"></div>
+
+  <h2 style="font-size:22px;margin:36px 0 16px">应用系统</h2>
+  <div class="feat-list" id="cSystems" style="grid-template-columns:repeat(2,1fr)"></div>
+
+  <div style="margin-top:40px;display:flex;gap:12px;flex-wrap:wrap">
+    <a class="btn btn-primary" href="contact.html">咨询同类项目方案</a>
+    <a class="btn btn-line" href="cases.html">返回案例列表</a>
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="data/site.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/motion.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+const CAT = { public: '公共建筑', education: '教育领域', business: '商业文化', residential: '住宅项目', industrial: '工业厂房', overseas: '海外项目' };
+const id = QMUI.param('id', 1);
+
+QMMount('cases').then(async () => {
+  const c = await QM.caseDetail(id);
+  if (!c) { document.getElementById('cTitle').textContent = '案例不存在'; return; }
+  document.title = c.title + ' | 快可美 quick-mix';
+  document.getElementById('crumbName').textContent = c.title;
+  const cover = c.cover ? (c.cover.startsWith('http') || c.cover.startsWith('/') ? c.cover : 'assets/img/case/' + c.cover) : 'assets/img/placeholder.svg';
+  document.getElementById('hero').style.backgroundImage = 'url(' + cover + ')';
+  document.getElementById('cTitle').textContent = c.title;
+  document.getElementById('cLoc').textContent = (c.location || '') + (c.year ? ' · ' + c.year : '');
+  document.getElementById('cInfo').innerHTML = [
+    ['项目分类', CAT[c.category] || '应用案例'],
+    ['项目地点', c.location || '—'],
+    ['应用规模', c.area || '—'],
+    ['建设单位', c.client || '—'],
+  ].map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('');
+  document.getElementById('cContent').textContent = c.content || '';
+  document.getElementById('cSystems').innerHTML = (c.systems || []).map((s) => `<li><b>${s}</b><span>快可美系统配套材料</span></li>`).join('');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="600" height="450">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef1f4"/>
+    </linearGradient>
+    <linearGradient id="pkg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#237C9B"/><stop offset=".55" stop-color="#67B6CC"/><stop offset="1" stop-color="#237C9B"/>
+    </linearGradient>
+    <linearGradient id="pkg2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#67B6CC"/><stop offset="1" stop-color="#237C9B"/>
+    </linearGradient>
+    <linearGradient id="lid" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e9ebee"/><stop offset=".5" stop-color="#ffffff"/><stop offset="1" stop-color="#dfe2e6"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="13" flood-color="#1a1d21" flood-opacity=".16"/>
+    </filter>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse">
+      <path d="M34 0H0V34" fill="none" stroke="#237C9B" stroke-opacity=".05" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <rect width="600" height="450" fill="url(#bg)"/>
+  <rect width="600" height="450" fill="url(#grid)"/>
+  <circle cx="470" cy="212" r="168" fill="#237C9B" opacity=".055"/>
+  <circle cx="470" cy="212" r="118" fill="none" stroke="#237C9B" stroke-opacity=".12" stroke-width="1"/>
+  <!-- 底部投影 -->
+  <ellipse cx="440" cy="362" rx="118" ry="13" fill="#1a1d21" opacity=".07"/>
+
+  <!-- 桶装 -->
+  <g filter="url(#shadow)">
+    <path d="M366 128 H514 L506 344 Q440 356 374 344 Z" fill="url(#pkg)"/>
+    <ellipse cx="440" cy="128" rx="74" ry="16" fill="#f4f5f7"/>
+    <ellipse cx="440" cy="122" rx="74" ry="16" fill="url(#lid)"/>
+    <rect x="374" y="182" width="132" height="106" rx="4" fill="#ffffff" opacity=".94"/>
+  </g>
+  <text x="440" y="232" text-anchor="middle" font-size="26" font-weight="800" fill="#237C9B">WP-300</text>
+  <text x="440" y="258" text-anchor="middle" font-size="11" fill="#6b7076">quick-mix</text>
+  <rect x="392" y="272" width="96" height="3" fill="#237C9B" opacity=".55"/>
+
+  <!-- 左侧信息区 -->
+  <rect x="46" y="86" width="4" height="34" fill="#237C9B"/>
+  <text x="64" y="112" font-size="13" letter-spacing="3" fill="#237C9B" font-family="Arial, Helvetica, sans-serif" font-weight="700">QUICK-MIX</text>
+  <text x="44" y="182" font-size="44" font-weight="800" fill="#1a1d21" font-family="Arial, Helvetica, sans-serif">WP-300</text>
+  <text x="46" y="220" font-size="20" font-weight="600" fill="#3a3f46" font-family="PingFang SC, Microsoft YaHei, sans-serif">快可美车库及地下室防水系统</text>
+  <text x="46" y="252" font-size="14" fill="#8a8f96" font-family="PingFang SC, Microsoft YaHei, sans-serif">防水系统</text>
+  <line x1="46" y1="278" x2="286" y2="278" stroke="#dfe2e6" stroke-width="1"/>
+  <text x="46" y="308" font-size="14" fill="#5b6169" font-family="PingFang SC, Microsoft YaHei, sans-serif">20kg/组</text>
+  <text x="46" y="332" font-size="12" fill="#a0a5ab" font-family="PingFang SC, Microsoft YaHei, sans-serif">防水系列</text>
+
+  <!-- 底部品牌条 -->
+  <rect x="0" y="424" width="600" height="26" fill="#237C9B" opacity=".9"/>
+  <text x="24" y="442" font-size="12" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-weight="700" letter-spacing="1">quick-mix</text>
+  <text x="576" y="442" text-anchor="end" font-size="11" fill="#ffffff" opacity=".85" font-family="PingFang SC, Microsoft YaHei, sans-serif">SINCE 1919 · GERMANY</text>
+</svg>

@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>建筑领域 | 快可美 quick-mix</title>
+<meta name="description" content="快可美建筑领域提供外墙外保温系统、装饰砂浆系统、屋面及室内防水系统、工业地坪系统、住宅产业化配套砂浆系统与抗菌自洁饰面系统。">
+<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<div id="header"></div>
+
+<div class="crumb"><div class="wrap"><a href="index.html">首页</a><span>/</span>建筑领域</div></div>
+
+<section class="hero" style="min-height:340px">
+  <div class="wrap">
+    <div class="hero-en">CONSTRUCTION FIELD</div>
+    <h1>建筑领域 · <em>工程系统解决方案</em></h1>
+    <p>面向开发商、总包、设计院与市政工程，提供从外墙保温到工业地坪的完整材料系统与技术支持。</p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" href="products.html">工程产品</a>
+      <a class="btn btn-ghost" href="cases.html">工程案例</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="solution">
+  <div class="wrap">
+    <div class="sec-head left"><div class="en">SOLUTION</div><h2>建筑解决方案</h2><p>系统化的材料组合与标准化施工工艺，为工程质量提供确定性。</p></div>
+    <div class="sol-list" id="solList"></div>
+  </div>
+</section>
+
+<section class="section soft">
+  <div class="wrap">
+    <div class="sec-head left"><div class="en">PROJECTS</div><h2>典型工程</h2>
+      <a class="sec-more" href="cases.html">全部案例 →</a>
+    </div>
+    <div class="grid-3" id="caseList"></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="grid-2">
+      <div>
+        <div class="en text-brand" style="font-size:12px;letter-spacing:3px">WHY QUICK-MIX</div>
+        <h2 style="font-size:26px;margin:10px 0 16px">为什么选择快可美工程系统</h2>
+        <ul class="feat-list" style="grid-template-columns:1fr;gap:14px">
+          <li><b>德国技术 · 本地生产</b><span>依托德国研发中心，采用进口及优质原材料，本地化生产保障交付。</span></li>
+          <li><b>系统配套 · 责任统一</b><span>各层材料相容性经系统验证，避免多品牌混用导致的层间失效。</span></li>
+          <li><b>技术标准 · 权威认证</b><span>符合 EN / GB / JC 系列标准，通过 ISO9001 与 ISO14001 体系认证。</span></li>
+          <li><b>现场服务 · 技术交底</b><span>提供选型、打样、技术交底与现场巡检，保障系统落地效果。</span></li>
+        </ul>
+      </div>
+      <div style="background:var(--bg-soft);border:1px solid var(--line);padding:32px">
+        <h3 style="margin-bottom:14px">工程采买咨询</h3>
+        <p class="muted" style="font-size:14px">提交项目信息，我们将安排技术工程师为您提供系统选型与方案报价。</p>
+        <div class="form-grid" style="grid-template-columns:1fr">
+          <div class="field"><label>项目名称 <i>*</i></label><input id="pName" placeholder="如：某某产业园一期"></div>
+          <div class="field"><label>联系人与电话 <i>*</i></label><input id="pPhone" placeholder="姓名 / 手机号"></div>
+          <div class="field"><label>需求描述</label><textarea id="pMsg" placeholder="建筑面积、应用系统、工期等"></textarea></div>
+          <button class="btn btn-primary" id="pSubmit">提交项目需求</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer"></div>
+<script src="data/site.js"></script>
+<script src="assets/js/api.js"></script>
+<script src="assets/js/motion.js"></script>
+<script src="assets/js/layout.js"></script>
+<script>
+QMMount('building').then(async () => {
+  const sol = await QM.solutions({ group: 'building' });
+  document.getElementById('solList').innerHTML = sol.rows.map(QMUI.solItem).join('');
+  const cs = await QM.cases({ pageSize: 3 });
+  document.getElementById('caseList').innerHTML = cs.rows.map(QMUI.caseItem).join('');
+
+  document.getElementById('pSubmit').onclick = async () => {
+    const name = document.getElementById('pName').value.trim();
+    const phone = document.getElementById('pPhone').value.trim();
+    const message = document.getElementById('pMsg').value.trim();
+    if (!name || !phone) return QMUI.toast('请填写项目名称与联系方式');
+    try {
+      await QM.submitLead({ type: '工程采买', name, phone, company: name, message, product: '建筑领域系统' });
+      QMUI.toast('已提交，我们会尽快与您联系');
+      document.getElementById('pName').value = document.getElementById('pPhone').value = document.getElementById('pMsg').value = '';
+    } catch (e) { QMUI.toast(e.message); }
+  };
+});
+</script>
+</body>
+</html>
